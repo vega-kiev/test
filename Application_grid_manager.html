@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кредитні заявки - Укргазбанк</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Use Inter font family */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for better UX in dark mode */
+        .table-row-link {
+            cursor: pointer;
+        }
+        .table-row-link:hover {
+            background-color: rgba(55, 65, 81, 0.5); /* gray-700/50 */
+        }
+        /* Custom styles for form inputs in dark mode */
+        .dark-input {
+            background-color: #374151; /* bg-gray-700 */
+            border: 1px solid #4b5563; /* border-gray-600 */
+            color: #d1d5db; /* text-gray-300 */
+        }
+        .dark-input::placeholder {
+            color: #6b7280; /* placeholder-gray-500 */
+        }
+        .dark-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #6366f1; /* focus:ring-2 focus:ring-indigo-500 */
+            border-color: #6366f1; /* focus:border-indigo-500 */
+        }
+        /* Styles for disabled pagination button */
+        .pagination-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+
+    <div class="flex flex-col min-h-screen">
+        <!-- Header -->
+        <header class="bg-gray-800 border-b border-gray-700 sticky top-0 z-10">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Logo and Title -->
+                    <div class="flex items-center space-x-4">
+                        <div class="text-2xl font-bold text-indigo-400">Укргазбанк</div>
+                        <h1 class="text-xl font-semibold text-gray-200 hidden sm:block">Кредитні заявки</h1>
+                    </div>
+                    <!-- User Profile -->
+                    <div class="flex items-center space-x-3">
+                        <span class="font-medium text-gray-300 hidden md:inline">Петренко В. О.</span>
+                        <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-indigo-400 font-bold border border-gray-600">
+                            П
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
+            
+            <!-- Filters Section -->
+            <div class="bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700 mb-6">
+                <h2 class="text-lg font-semibold mb-4 text-gray-200">Фільтрація та сортування</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <!-- Filter by Status -->
+                    <div>
+                        <label for="status-filter" class="block text-sm font-medium text-gray-400">Статус</label>
+                        <select id="status-filter" class="mt-1 block w-full rounded-lg dark-input transition-all duration-300">
+                            <option>Всі</option>
+                            <option>Створена</option>
+                            <option>В роботі</option>
+                            <option>Схвалено</option>
+                            <option>Відхилено</option>
+                            <option>Архів</option>
+                        </select>
+                    </div>
+                    <!-- Filter by Product -->
+                    <div>
+                        <label for="product-filter" class="block text-sm font-medium text-gray-400">Назва продукту</label>
+                        <select id="product-filter" class="mt-1 block w-full rounded-lg dark-input transition-all duration-300">
+                            <option>Всі</option>
+                            <option>Мікрокредит</option>
+                            <option>Мікрокредит 5-7-9</option>
+                        </select>
+                    </div>
+                    <!-- Filter by Date -->
+                    <div>
+                        <label for="date-filter" class="block text-sm font-medium text-gray-400">Дата створення</label>
+                        <input type="date" id="date-filter" class="mt-1 block w-full rounded-lg dark-input transition-all duration-300">
+                    </div>
+                    <!-- Filter by Amount -->
+                    <div>
+                        <label for="amount-filter" class="block text-sm font-medium text-gray-400">Сума кредиту (від)</label>
+                        <input type="number" id="amount-filter" placeholder="напр. 50000" class="mt-1 block w-full rounded-lg dark-input transition-all duration-300">
+                    </div>
+                    <!-- Apply Button -->
+                    <div class="self-end">
+                        <button class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105 duration-300 ease-in-out">
+                            Застосувати
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Applications Section -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-white mb-4">Нові заявки</h2>
+                <div class="bg-gray-800 rounded-xl shadow-lg border border-gray-700 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-700">
+                            <thead class="bg-gray-700/50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Дата</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Джерело</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Продукт</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Сума</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">Дії</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-700">
+                                <!-- Sample Row 1 -->
+                                <tr data-status="Створена" class="table-row-link" onclick="window.location.href='#'">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">04.07.2025</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">СДО Екобум 24/7</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">75 000 грн</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
+                                        <button class="bg-indigo-500 text-white px-3 py-1 rounded-md hover:bg-indigo-600 text-xs font-semibold">Призначити</button>
+                                        <button class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-500 text-xs font-semibold">Архівувати</button>
+                                    </td>
+                                </tr>
+                                <!-- Sample Row 2 -->
+                                <tr data-status="Створена" class="table-row-link" onclick="window.location.href='#'">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">03.07.2025</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">Корпоративний сайт банку</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит 5-7-9</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">1 200 000 грн</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
+                                        <button class="bg-indigo-500 text-white px-3 py-1 rounded-md hover:bg-indigo-600 text-xs font-semibold">Призначити</button>
+                                        <button class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-500 text-xs font-semibold">Архівувати</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Applications Section -->
+            <div>
+                <h2 class="text-2xl font-bold text-white mb-4">Загальний список заявок</h2>
+                <div class="bg-gray-800 rounded-xl shadow-lg border border-gray-700 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table id="applications-table" class="min-w-full divide-y divide-gray-700">
+                            <thead class="bg-gray-700/50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Дата</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Статус</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">ФОП/Компания</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Продукт</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Сума</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Менеджер</th>
+                                </tr>
+                            </thead>
+                            <tbody id="applications-tbody" class="divide-y divide-gray-700">
+                                <!-- Rows will be dynamically populated and managed by JavaScript -->
+                                <!-- Sample Data Rows (more added for pagination demo) -->
+                                <tr data-status="В роботі" class="table-row-link" onclick="window.location.href='#'">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">02.07.2025</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">В роботі</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ФОП Косач-Квітка Л.П.</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">450 000 грн</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Петренко В. О.</td>
+                                </tr>
+                                <tr data-status="Схвалено" class="table-row-link" onclick="window.location.href='#'">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">01.07.2025</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">Схвалено</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ТОВ "Еко-Продукт"</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">50 000 грн</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Іваненко І. І.</td>
+                                </tr>
+                                <tr data-status="Відхилено" class="table-row-link" onclick="window.location.href='#'">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">28.06.2025</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">Відхилено</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ФОП Сковорода Г.С.</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит 5-7-9</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">950 000 грн</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Петренко В. О.</td>
+                                </tr>
+                                <tr data-status="Архів" class="table-row-link" onclick="window.location.href='#'">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">15.05.2025</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">Архів</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ФОП Кобилянська О.Ю.</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">25 000 грн</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Іваненко І. І.</td>
+                                </tr>
+                                <!-- Additional 11 rows for pagination demo -->
+                                <tr data-status="Схвалено" class="table-row-link" onclick="window.location.href='#'"><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">14.05.2025</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">Схвалено</span></td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ТОВ "Агро-Вест"</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит 5-7-9</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">150 000 грн</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Петренко В. О.</td></tr>
+                                <tr data-status="В роботі" class="table-row-link" onclick="window.location.href='#'"><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">13.05.2025</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">В роботі</span></td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ФОП Симоненко В.А.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">30 000 грн</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Іваненко І. І.</td></tr>
+                                <tr data-status="Схвалено" class="table-row-link" onclick="window.location.href='#'"><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">12.05.2025</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">Схвалено</span></td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ФОП Стус В.С.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">90 000 грн</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Петренко В. О.</td></tr>
+                                <tr data-status="Відхилено" class="table-row-link" onclick="window.location.href='#'"><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">11.05.2025</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">Відхилено</span></td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ПрАТ "Буд-Інвест"</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит 5-7-9</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">2 500 000 грн</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Іваненко І. І.</td></tr>
+                                <tr data-status="В роботі" class="table-row-link" onclick="window.location.href='#'"><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">10.05.2025</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">В роботі</span></td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ФОП Рильський М.Т.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">120 000 грн</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Петренко В. О.</td></tr>
+                                <tr data-status="Архів" class="table-row-link" onclick="window.location.href='#'"><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">09.05.2025</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">Архів</span></td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ФОП Сосюра В.М.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">15 000 грн</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Іваненко І. І.</td></tr>
+                                <tr data-status="Схвалено" class="table-row-link" onclick="window.location.href='#'"><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">08.05.2025</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">Схвалено</span></td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ТОВ "Зернотрейд"</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит 5-7-9</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">750 000 грн</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Петренко В. О.</td></tr>
+                                <tr data-status="В роботі" class="table-row-link" onclick="window.location.href='#'"><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">07.05.2025</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">В роботі</span></td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ФОП Олійник Б.І.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">200 000 грн</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Іваненко І. І.</td></tr>
+                                <tr data-status="Схвалено" class="table-row-link" onclick="window.location.href='#'"><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">06.05.2025</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">Схвалено</span></td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ФОП Драч І.Ф.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">45 000 грн</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Петренко В. О.</td></tr>
+                                <tr data-status="Відхилено" class="table-row-link" onclick="window.location.href='#'"><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">05.05.2025</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">Відхилено</span></td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ТОВ "Мегабуд"</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит 5-7-9</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">3 000 000 грн</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Іваненко І. І.</td></tr>
+                                <tr data-status="Архів" class="table-row-link" onclick="window.location.href='#'"><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-200">04.05.2025</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-badge">Архів</span></td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">ФОП Костенко Л.В.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Мікрокредит</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">10 000 грн</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Петренко В. О.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination Controls -->
+                    <div id="pagination-controls" class="flex items-center justify-between px-6 py-3 bg-gray-800 border-t border-gray-700">
+                        <div class="flex items-center space-x-2">
+                            <label for="items-per-page" class="text-sm font-medium text-gray-400">Заявок на сторінці:</label>
+                            <select id="items-per-page" class="rounded-lg dark-input text-sm">
+                                <option value="10">10</option>
+                                <option value="30">30</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <span id="page-info" class="text-sm text-gray-400"></span>
+                            <div class="flex items-center space-x-2">
+                                <button id="prev-page" class="pagination-button px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-md text-sm font-semibold">Назад</button>
+                                <button id="next-page" class="pagination-button px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-md text-sm font-semibold">Вперед</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="bg-gray-800 border-t border-gray-700 mt-auto">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-6 md:space-y-0">
+                    
+                    <!-- Copyright -->
+                    <div class="text-sm text-gray-400">
+                        <p>© АБ «УКРГАЗБАНК»</p>
+                        <p>Ліцензія НБУ № 123 від 06.10.2011р.</p>
+                    </div>
+
+                    <!-- Call Center -->
+                    <div class="text-sm text-gray-400">
+                        <p class="font-semibold text-gray-300">Call-центр</p>
+                        <div class="flex flex-col items-center md:items-start">
+                            <a href="tel:358" class="text-lg font-bold text-indigo-400 hover:text-indigo-300">358</a>
+                            <span class="text-xs text-gray-500">(безкоштовно з мобільного)</span>
+                        </div>
+                         <a href="tel:+380444944650" class="text-indigo-400 hover:text-indigo-300">(044) 494-46-50</a>
+                    </div>
+
+                    <!-- Links -->
+                    <div class="flex flex-col space-y-2 text-sm">
+                        <a href="#" class="font-medium text-indigo-400 hover:text-indigo-300 hover:underline">Відділення та банкомати</a>
+                        <a href="#" class="font-medium text-indigo-400 hover:text-indigo-300 hover:underline">Зворотний зв'язок</a>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- STATUS COLORING LOGIC ---
+            const statusStyles = {
+                'Створена':  { badge: 'bg-indigo-900/60 text-indigo-300',   border: 'border-l-4 border-indigo-500' },
+                'В роботі':   { badge: 'bg-yellow-900/60 text-yellow-300', border: 'border-l-4 border-yellow-500' },
+                'Схвалено':   { badge: 'bg-green-900/60 text-green-300',   border: 'border-l-4 border-green-500' },
+                'Відхилено':  { badge: 'bg-red-900/60 text-red-300',     border: 'border-l-4 border-red-500' },
+                'Архів':      { badge: 'bg-gray-700 text-gray-400',   border: 'border-l-4 border-gray-500' }
+            };
+
+            function applyRowStyles(row) {
+                const status = row.dataset.status;
+                const style = statusStyles[status];
+                if (style) {
+                    row.classList.add(...style.border.split(' '));
+                    const badge = row.querySelector('.status-badge');
+                    if (badge) {
+                        badge.classList.add(...style.badge.split(' '));
+                        badge.classList.add('px-2.5', 'py-0.5', 'rounded-full', 'text-xs', 'font-semibold', 'inline-block');
+                    }
+                }
+            }
+
+            // Apply styles to all rows initially
+            document.querySelectorAll('tr[data-status]').forEach(applyRowStyles);
+
+            // --- PAGINATION LOGIC ---
+            const tableBody = document.getElementById('applications-tbody');
+            if (tableBody) {
+                const rows = Array.from(tableBody.querySelectorAll('tr'));
+                const itemsPerPageSelect = document.getElementById('items-per-page');
+                const prevButton = document.getElementById('prev-page');
+                const nextButton = document.getElementById('next-page');
+                const pageInfo = document.getElementById('page-info');
+
+                let currentPage = 1;
+                let itemsPerPage = parseInt(itemsPerPageSelect.value, 10);
+
+                function showPage(page) {
+                    currentPage = page;
+                    const totalRows = rows.length;
+                    const totalPages = Math.ceil(totalRows / itemsPerPage);
+                    
+                    // Hide all rows first
+                    rows.forEach(row => row.style.display = 'none');
+
+                    // Calculate which rows to show
+                    const startIndex = (page - 1) * itemsPerPage;
+                    const endIndex = startIndex + itemsPerPage;
+                    const pageRows = rows.slice(startIndex, endIndex);
+
+                    // Show the rows for the current page
+                    pageRows.forEach(row => row.style.display = ''); // Reverts to default display (table-row)
+
+                    // Update pagination controls
+                    pageInfo.textContent = `Сторінка ${currentPage} з ${totalPages}`;
+                    prevButton.disabled = currentPage === 1;
+                    nextButton.disabled = currentPage === totalPages || totalPages === 0;
+                }
+
+                // Event listener for items per page change
+                itemsPerPageSelect.addEventListener('change', () => {
+                    itemsPerPage = parseInt(itemsPerPageSelect.value, 10);
+                    showPage(1); // Reset to the first page
+                });
+
+                // Event listener for previous button
+                prevButton.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        showPage(currentPage - 1);
+                    }
+                });
+
+                // Event listener for next button
+                nextButton.addEventListener('click', () => {
+                    const totalPages = Math.ceil(rows.length / itemsPerPage);
+                    if (currentPage < totalPages) {
+                        showPage(currentPage + 1);
+                    }
+                });
+
+                // Initial setup
+                if (rows.length > 0) {
+                    showPage(1);
+                } else {
+                    // Handle case with no rows
+                    pageInfo.textContent = "Немає заявок для відображення";
+                    prevButton.disabled = true;
+                    nextButton.disabled = true;
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
